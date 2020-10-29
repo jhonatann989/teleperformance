@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<head></head>
+<body>
+    <input type="text" id="fecha" onchange="formatFecha()">
+    <select id="tipoFecha" onchange="formatFecha()">
+        <option value="tipo1" selected>Fecha tipo 1 (dd/MM/yyyy)</option>
+        <option value="tipo2">Fecha tipo 2 (yyyy-MM-dd )</option>
+        <option value="tipo3">Fecha tipo 3 (dd/XXXX/yyyy )</option>
+    </select>
+    <div id="mensajes"></div>
+
+    <script lang="javascript">
+        function formatFecha () {
+            document.getElementById("mensajes").innerHTML = ""
+            var fecha = (typeof document.getElementById("fecha") != "undefined")? document.getElementById("fecha").value : null;
+            var tipoFecha = document.getElementById("tipoFecha").value;
+            switch(tipoFecha) {
+                case "tipo1":
+                    if(fecha != null) {
+                        var arrayFecha = fecha.split("/");
+                        if(arrayFecha.length == 3) {
+                            var dia = parseInt(arrayFecha[0]);
+                            var mes = parseInt(arrayFecha[1]);
+                            var year = parseInt(arrayFecha[2]);
+                            var count = dayCounter(dia, mes, year);
+                            if(count != null) {
+                                document.getElementById("mensajes").innerHTML = "El numero de dias transcurrido hasta la fecha indicada es: " + count;
+                            } else {
+                                document.getElementById("mensajes").innerHTML = "No es posible calcular el conteo de dias desde años anteriores o posteriores a 2020."
+                            }
+                        }
+                    } else {
+                        document.getElementById("mensajes").innerHTML = "Indique la fecha para continuar."
+                    }
+                break;
+                case "tipo2":
+                    if(fecha != null) {
+                        var arrayFecha = fecha.split("-");
+                        if(arrayFecha.length == 3) {
+                            var dia = parseInt(arrayFecha[2]);
+                            var mes = parseInt(arrayFecha[1]);
+                            var year = parseInt(arrayFecha[0]);
+                            var count = dayCounter(dia, mes, year);
+                            if(count != null) {
+                                document.getElementById("mensajes").innerHTML = "El numero de dias transcurrido hasta la fecha indicada es: " + count;
+                            } else {
+                                document.getElementById("mensajes").innerHTML = "No es posible calcular el conteo de dias desde años anteriores o posteriores a 2020."
+                            }
+                        }
+                    } else {
+                        document.getElementById("mensajes").innerHTML = "Indique la fecha para continuar."
+                    }
+                break;
+                case "tipo3":
+                    if(fecha != null) {
+                        var arrayFecha = fecha.split("/");
+                        if(arrayFecha.length == 3) {
+                            var dia = parseInt(arrayFecha[0]);
+                            var mes = returnCorrectMonth(arrayFecha[1]);
+                            var year = parseInt(arrayFecha[2]);
+
+                            if(mes != null) {
+                                var count = dayCounter(dia, mes, year);
+                                if(count != null) {
+                                    document.getElementById("mensajes").innerHTML = "El numero de dias transcurrido hasta la fecha indicada es: " + count;
+                                } else {
+                                    document.getElementById("mensajes").innerHTML = "No es posible calcular el conteo de dias desde años anteriores o posteriores a 2020."
+                                }
+                            } else {
+                                document.getElementById("mensajes").innerHTML = "Es posible que el mes indicado contenga errores ortograficos. Asegurese de escribirlo correctamente."
+                            }
+
+
+                        }
+                    } else {
+                        document.getElementById("mensajes").innerHTML = "Indique la fecha para continuar."
+                    }
+                break;
+            } 
+        }
+
+        function dayCounter(dia, mes, year) {
+            var diasPorMes = [  31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31 ];
+            var actualYear = 2020;
+            var count = 0;
+            if(year == actualYear) {
+                diasPorMes.map((item, index) => {
+                    if(index < (mes-1)) {
+                        count += item;
+                    }
+                    if(index == (mes-1)) {
+                        count += dia;
+                    }
+                })
+                return count;
+            } else {
+                return null
+            }
+        }
+
+        function returnCorrectMonth(string) {
+            var arrayMonth = ["enero", "febrero", "marzo", "abril", "mayo", "junio", "julio", "agosto", "septiembre", "octubre", "noviembre", "diciembre"]
+            var findMonth = arrayMonth.findIndex(month=> month == string.toLowerCase())
+            return (findMonth != -1)? (findMonth + 1) : null;
+        }
+
+    </script>
+</body>
